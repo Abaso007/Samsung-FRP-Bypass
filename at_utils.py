@@ -36,11 +36,7 @@ def ATSend(io: serial.Serial, cmd: str) -> bool:
         return False
     if ret == b"\r\n":
         return False
-    if ret == cmd.encode():
-        return True
-    if ret == b'':
-        return False
-    return True
+    return True if ret == cmd.encode() else ret != b''
 
 def tryATCmds(io: serial.Serial, cmds: List[str]):
     for i, cmd in enumerate(cmds):
@@ -67,13 +63,14 @@ def enableADB():
     input()
 
     print("Enabling USB Debugging...")
-    cmds = []
-    cmds.append("AT+DUMPCTRL=1,0\r\n")
-    cmds.append("AT+DEBUGLVC=0,5\r\n")
-    cmds.append("AT+SWATD=0\r\n")
-    cmds.append("AT+ACTIVATE=0,0,0\r\n")
-    cmds.append("AT+SWATD=1\r\n")
-    cmds.append("AT+DEBUGLVC=0,5\r\n")
+    cmds = [
+        "AT+DUMPCTRL=1,0\r\n",
+        "AT+DEBUGLVC=0,5\r\n",
+        "AT+SWATD=0\r\n",
+        "AT+ACTIVATE=0,0,0\r\n",
+        "AT+SWATD=1\r\n",
+        "AT+DEBUGLVC=0,5\r\n",
+    ]
     tryATCmds(io, cmds)
 
     print("USB Debugging should be enabled")
